@@ -65,25 +65,33 @@ def update
 		# end
 		#params = what's being passed from the form 
 		@checked = params['owners'] #new owner's user_id passed in. 
-		
+		puts @checked
 		#ensures owner is only added to the group once. 
 		#alternate solution: specify custom primary key on join table
-		begin
-			@group.memberships.where(role: "owner").find(@checked)
+		# begin
+		# 	@group.memberships.where(role: "owner").find_by_user_id(@checked)
+		# 	puts "no change"
 			
-		rescue ActiveRecord::RecordNotFound
-			@group.users << User.find(@checked)
+		# rescue ActiveRecord::RecordNotFound
+		# 	puts "new owner"
+		# 	@group.users << User.find(@checked)
 			
-		else
-		puts "ERROR"
-		end
+		# end
 
 
 	    respond_to do |format|
-	      if @group.update_attributes(group_params)
+	    if @group.update_attributes(group_params)
+	      	
+	      	begin 
+			@group.users << User.find(@checked)
+		
+			rescue ActiveRecord::RecordNotUnique
+			puts "no change"
+			
+			end
 	        format.html { redirect_to(@group, :notice => 'Group was successfully updated.') }
 	        format.xml  { head :ok }
-	      else
+	    else
 	        render :edit
 	    
 	      end
