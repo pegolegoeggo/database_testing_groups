@@ -13,3 +13,20 @@
  *= require_tree .
  *= require_self
  */
+
+h1{
+	color: blue;
+}
+
+body{
+	background:linear-gradient(#baffe5, white) no-repeat center center fixed;
+}
+
+.navigation{
+	background:#CCCCFF;
+	float:left;
+	padding:10px;
+	margin-right:10px;
+	border-radius:15px;
+
+}

@@ -1,0 +1,23 @@
+<%= render 'home' %>
+<h1> Groups </h1> 
+
+Search for a Group: 
+<%= form_tag groups_path, :method => 'get' do %>
+	<%= text_field_tag :search, params['search'] %>
+	<%= submit_tag "Search" %>
+<% end %>
+<br/>
+
+<%= link_to "See all groups", :controller => 'groups', :action => 'index'%> 
+
+<h3> Listing Groups: <br/> </h3>
+ 
+<% if !@groups.blank? %>
+	<% for item in @groups %>
+		<%= link_to item.name, :controller => 'groups', :action => 'show', :id => item.id %> <br/>
+	<% end %>
+
+<% else %>
+	<p> no groups found </p>
+
+<% end %>

@@ -1,5 +1,12 @@
 class DocumentsController < ApplicationController
-	
+	def index
+		if params['search']
+			@documents = Document.where(["title LIKE ?", "%#{params['search']}%"])
+		else
+			@documents = Document.all
+		end
+	end
+
 	def show
 		if (params.has_key?(:id))
 			@id = params['id']

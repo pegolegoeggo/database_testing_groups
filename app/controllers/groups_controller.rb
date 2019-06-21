@@ -1,5 +1,12 @@
 class GroupsController < ApplicationController
 	
+	def index
+		if params['search']
+			@groups = Group.where(["name LIKE ?", "%#{params['search']}%"])
+		else
+			@groups = Group.all
+		end
+	end
 	def show
 		if (params.has_key?(:id))
 			@id = params['id']
@@ -20,12 +27,12 @@ class GroupsController < ApplicationController
 				#returns a collection of Membership objects, NOT USERS. 
 			end
 
-			
+
 		end
 	end 
 	def new
 		@group = Group.new
-		@groups = Group.all
+		@groups = Group.limit(10)
 		@users = User.all
 		respond_to do |format|
 		    format.html # new.html.erb
