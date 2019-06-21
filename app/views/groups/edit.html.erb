@@ -1,0 +1,45 @@
+<%= render 'home' %>
+
+<h1>Editing Group: <%= @group.name %> </h1>
+
+<% if !@owners.nil? %>
+	Owner(s): 
+	<% @owners.each do |o| %> 
+		<%= link_to User.find(o.user_id).name, :controller => 'users', :action => 'show', :id => o.user_id %> 
+	<% end %>
+<% end %>
+
+<%= form_for @group do |f| %>
+	<p> 
+		<%= f.label :name %>
+		<%= f.text_field :name %> <br />
+	</p>
+
+	<p> 
+	Owner: <%= select_tag "owners", options_from_collection_for_select(@users, "id", "name", @first) %>
+	</p>
+
+	
+
+	<p>
+		<%= f.submit %>
+
+	</p>
+<% end %>
+
+	
+
+Current Documents: <br/>
+ 
+<% if !@documents.blank? %>
+	<% for item in @documents %>
+		<%= link_to item.title, :controller=> 'documents', :action => 'show', :id=> item.id %> <br/>
+<% end %>
+
+<% else %>
+	<p> no documents found </p>
+
+<% end %>
+
+<%= link_to 'Show', @group %> |
+<%= link_to 'Back', group_path %>

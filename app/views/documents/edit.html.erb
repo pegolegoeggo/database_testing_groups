@@ -1,0 +1,48 @@
+<%= render 'home' %>
+
+<h1>Editing Document</h1>
+
+Current Groups: 
+<% @current_groups.each do |g| %>
+	<%= g.name %> <br/>
+<% end %>
+
+<%= form_for @document do |f| %>
+	<p> 
+		<%= f.label :title %>
+		<%= f.text_field :title %> <br />
+	</p>
+
+	<p> 
+		<%= f.label :body %>
+		<%= f.text_area :body %> <br />
+	</p>
+	<p> 
+	
+
+	<%= select_tag "groups", options_from_collection_for_select(@groups, "id", "name", @first) %>
+	
+	</p>
+
+	<p>
+		<%= f.submit %>
+
+	</p>
+<% end %>
+
+	
+
+Current Documents: <br/>
+ 
+<% if !@documents.blank? %>
+	<% for item in @documents %>
+		<%= link_to item.title, :controller=> 'documents', :action => 'show', :id=> item.id %> <br/>
+<% end %>
+
+<% else %>
+	<p> no documents found </p>
+
+<% end %>
+
+<%= link_to 'Show', @document %> |
+<%= link_to 'Back', documents_path %>

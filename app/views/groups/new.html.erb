@@ -1,0 +1,31 @@
+Enter new group info
+
+<%= form_for @group do |f| %>
+	<p> 
+		<%= f.label :group %>
+		<%= f.text_field :name %> <br />
+	</p>
+	<p> 
+		<%= f.label "Creator" %>
+		<%= select_tag "creator", options_from_collection_for_select(@users, "id", "name"), include_blank: true %>	
+	</p>
+	<p>
+		<%= f.submit %>
+
+	</p>
+<% end %>
+
+
+
+Current Groups: <br/>
+ 
+<% if !@groups.blank? %>
+	<% for item in @groups %>
+		<%= link_to item.name, :controller => 'groups', :action => 'show', :id => item.id %> <br/>
+	<% end %>
+
+<% else %>
+	<p> no groups found </p>
+
+<% end %>
+

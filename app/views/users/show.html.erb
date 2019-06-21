@@ -1,0 +1,26 @@
+
+<% if(params.has_key?(:id)) %>
+	<%= "User ID: #{params[:id]}" %> <br/>
+	<h1> <%= @name %> </h1>
+	<h2> <%= @email %></h2>
+
+	<% if !@groups.nil? %>
+		<h3>Groups: </h3>
+		<% @groups.each do |g|%>
+			<%= link_to g.name, :controller => 'groups', :action => 'show', :id => g.id %> <br/>
+			<% @docs = g.documents %>
+			<% if !@docs.nil? %>
+				<ul>
+					<% @docs.each do |d|%>
+						<li><%= link_to d.title, :controller => 'documents', :action => 'show', :id => d.id %> </li>
+					<% end %>
+				</ul>
+			<% end %>
+		<% end %>
+	<% end %>
+
+
+
+<br>
+<%= link_to 'Create new User', :controller => 'users', :action => 'new' %>
+<% end %>

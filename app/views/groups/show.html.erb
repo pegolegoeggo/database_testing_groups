@@ -1,0 +1,34 @@
+<%= render 'home' %>
+
+<% if(params.has_key?(:id)) %>
+	<%= "Group ID: #{params[:id]}" %> <br/>
+<!-- 	<% if(!@owner.nil?) %>
+		Owner: <%= link_to @owner, :controller => 'users', :action => 'show', :id => @owner_id %>
+	<% end %> -->
+
+	<% if !@owners.nil? %>
+		Owner(s): 
+		<% @owners.each do |o| %> 
+			<%= link_to User.find(o.user_id).name, :controller => 'users', :action => 'show', :id => o.user_id %> 
+		<% end %>
+	<% end %>
+
+	<h1> <%= @name %> </h1>
+
+	<h2>Documents: </h2>
+	<% if !@documents.nil? %>
+		<% @documents.each do |doc| %>
+			<% if !doc.title.nil? %>
+				<%= link_to doc.title, :controller => 'documents', :action => 'show', :id => doc.id %> <br/>
+			<% end %>
+		<% end %>
+	<% else %>
+		<p> No documents to show </p>
+	<% end %>
+
+<% end %>
+
+
+<br>
+<%= link_to 'Create new Group', :controller => 'groups', :action => 'new' %>
+<%= link_to 'Edit Current Group', :controller => 'groups', :action => 'edit' %>

@@ -1,0 +1,20 @@
+<%= render 'home' %>
+
+<% if(params.has_key?(:id)) %>
+	<%= "document ID: #{params[:id]}" %> <br/>
+	<h1> <%= @title %> </h1>
+	<p> <%= @body %> </p>
+
+	<h2>Groups: </h2>
+	<% @groups.each do |g| %>
+		<% if !g.name.nil? %>
+			<%= link_to g.name, :controller => 'groups', :action => 'show', :id => g.id %> <br/>
+		<% end %>
+	<% end %>
+
+<% end %>
+
+
+<br>
+<%= link_to 'Create new Doc', :controller => 'documents', :action => 'new' %>
+<%= link_to 'Edit Current Doc', :controller => 'documents', :action => 'edit' %>

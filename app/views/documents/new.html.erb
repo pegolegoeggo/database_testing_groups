@@ -1,0 +1,50 @@
+<%= render 'home' %>
+
+Enter new document info
+
+<%= form_for @document do |f| %>
+	<p> 
+		<%= f.label :title %>
+		<%= f.text_field :title %> <br />
+	</p>
+
+	<p> 
+		<%= f.label :body %>
+		<%= f.text_area :body %> <br />
+	</p>
+	<!-- <p> 
+
+
+	<% @groups.each do |g| %>
+		<%= f.label g.name %> 
+		<%= check_box_tag "groups[#{g.name}]", g.name %>
+		<br/>
+	<% end %>
+	</p> -->
+	<p> 
+	
+
+	<%= select_tag "groups", options_from_collection_for_select(@groups, "id", "name"), include_blank: true %>
+	
+	</p>
+	
+
+	<p>
+		<%= f.submit %>
+
+	</p>
+<% end %>
+
+
+
+Current Documents: <br/>
+ 
+<% if !@documents.blank? %>
+	<% for item in @documents %>
+		<%= link_to item.title, :controller=> 'documents', :action => 'show', :id=> item.id %> <br/>
+<% end %>
+
+<% else %>
+	<p> no documents found </p>
+
+<% end %>
