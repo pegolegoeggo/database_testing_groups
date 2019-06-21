@@ -81,7 +81,6 @@ def update
 
 	    respond_to do |format|
 	    if @group.update_attributes(group_params)
-	      	
 	      	begin 
 			@group.users << User.find(@checked)
 		
