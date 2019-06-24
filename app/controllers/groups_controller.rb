@@ -59,35 +59,19 @@ class GroupsController < ApplicationController
 
 def update
 	
-	    @group = Group.find(params['id'])
-	 #    params['groups'].each do |k|
-		# 	@document.groups << Group.find_by_name(k)
-		# end
-		#params = what's being passed from the form 
-		@checked = params['owners'] #new owner's user_id passed in. 
-		puts @checked
-		#ensures owner is only added to the group once. 
-		#alternate solution: specify custom primary key on join table
-		# begin
-		# 	@group.memberships.where(role: "owner").find_by_user_id(@checked)
-		# 	puts "no change"
-			
-		# rescue ActiveRecord::RecordNotFound
-		# 	puts "new owner"
-		# 	@group.users << User.find(@checked)
-			
-		# end
-
-
-	    respond_to do |format|
+	@group = Group.find(params['id'])
+	@checked = params['owners'] #new owner's user_id passed in. 
+	puts @checked
+	
+	respond_to do |format|
 	    if @group.update_attributes(group_params)
 	      	begin 
 			@group.users << User.find(@checked)
 		
-			rescue ActiveRecord::RecordNotUnique
+		rescue ActiveRecord::RecordNotUnique
 			puts "no change"
 			
-			end
+		end
 	        format.html { redirect_to(@group, :notice => 'Group was successfully updated.') }
 	        format.xml  { head :ok }
 	    else
@@ -100,9 +84,9 @@ def update
 	def edit
 		#db calls
 		@id = params['id']
-	    @group = Group.find(@id)
-	    @users = User.all #for display in drop down menu..not ideal for now. 
-	    @documents = @group.documents
+	    	@group = Group.find(@id)
+		@users = User.all #for display in drop down menu..not ideal for now. 
+		@documents = @group.documents
 
 	    if !Membership.find_by(group_id: @id).nil?
 	    	puts "here"
