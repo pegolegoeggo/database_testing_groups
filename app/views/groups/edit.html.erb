@@ -19,34 +19,35 @@
 	Add Owner: <%= select_tag "owners", options_from_collection_for_select(@users, "id", "name", @first) %>
 	</p>
 
-	
-
-	<p>
-		<%= f.submit %>
-
-	</p>
-<% end %>
-
-<h3>People </h3>
-<table>
-	<tr>
-		<th> Name </th>
-		<th> Role </th>
-		<th> Edit </th>
-	</tr>
-	<% @memberships.each do |m| %>
-		<tr> 
-			<% @person = User.find(m.user_id) %>
-			<td> <%= link_to @person.name, @person %></td>
-			<td> <%= m.role %> </td> 
-			<td> <%= link_to 'Remove from group', :controller => 'groups', :action => 'remove_member', :m_id => m.id, :group => Group.find(m.group_id) %></td>
+	<h3>People </h3>
+	<table>
+		<tr>
+			<th> Name </th>
+			<th> Role </th>
+			<th> Edit </th>
 		</tr>
+		<% if !@memberships.nil? %>
+	<% @memberships.each do |m| %>
+			<tr> 
+				<% @person = User.find(m.user_id) %>
+				<td> <%= link_to @person.name, @person %></td>
+
+				<td> <%= select_tag "role" + @person.id.to_s, options_for_select([ "owner", "member" ], m.role) %> </td> 
+
+				<td> <%= link_to 'Remove from group', :controller => 'groups', :action => 'remove_member', :m_id => m.id, :group => Group.find(m.group_id) %></td>
+			</tr>
+		<% end %>
+	<% end %>
+		
+
+
+	</table>
+	<p> <%= f.submit %> </p>
 	<% end %>
 
 
-</table>
-
 <br/>
+
 
 Current Documents: <br/>
  

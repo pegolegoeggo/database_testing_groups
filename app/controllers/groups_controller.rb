@@ -24,7 +24,8 @@ class GroupsController < ApplicationController
 			#trying multiple owners support: 
 			if !Membership.find_by(group_id: @id).nil?
 				@owners = @group.memberships.where(role: "owner")
-				#returns a collection of Membership objects, NOT USERS. 
+				#returns a collection of Membership objects, NOT USERS.
+				@memberships = @group.memberships.order('role DESC')
 			end
 
 
@@ -59,9 +60,25 @@ class GroupsController < ApplicationController
 
 def update
 	
-	@group = Group.find(params['id'])
+	@group_id = params['id']
+	@group = Group.find(@group_id)
 	@checked = params['owners'] #new owner's user_id passed in. 
 	puts @checked
+
+	if !@group.memberships.nil?
+		for rel in @group.memberships
+			@uid = rel.user_id.to_s
+			@current_role = rel.role
+			@selected_role = params['role' + @uid]
+			if @current_role != @selected_role
+				rel.role = @selected_role
+				rel.save
+				puts "role updated"
+			end
+
+		end
+	end
+
 	
 	respond_to do |format|
 	    if @group.update_attributes(group_params)
@@ -84,7 +101,7 @@ def update
 	def edit
 		#db calls
 		@id = params['id']
-	    	@group = Group.find(@id)
+	    @group = Group.find(@id)
 		@users = User.all #for display in drop down menu..not ideal for now. 
 		@documents = @group.documents
 
@@ -92,7 +109,7 @@ def update
 	    	puts "here"
 			@owners = @group.memberships.where(role: "owner")
 			#returns a collection of Membership objects, NOT USERS. 
-			if !@owners.nil?
+			if !@owners.nil? && @owners.length > 0 #first clause not enough to handle no owners case
 				puts "owner not nil"
 				@first = User.find(@owners.first.user_id).id
 			else
@@ -100,6 +117,7 @@ def update
 			end
 
 			@memberships = @group.memberships
+
 		else
 			puts "group not found in membership"
 		end

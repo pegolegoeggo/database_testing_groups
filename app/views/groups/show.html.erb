@@ -28,6 +28,26 @@
 
 <% end %>
 
+<h3>People </h3>
+	<table>
+		<tr>
+			<th> Name </th>
+			<th> Role </th>
+		</tr>
+		<% if !@memberships.nil? %>
+		<% @memberships.each do |m| %>
+			<tr> 
+				<% @person = User.find(m.user_id) %>
+				<td> <%= link_to @person.name, @person %></td>
+				<td> <%= m.role %> </td> 
+			</tr>
+		<% end %>
+	<% end %>
+		
+
+
+	</table>
+
 
 <br>
 <%= link_to 'Create new Group', :controller => 'groups', :action => 'new' %>
