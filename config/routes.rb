@@ -10,6 +10,9 @@ Rails.application.routes.draw do
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
+  #removing a member from a group
+   get 'remove_member' => "groups#remove_member"
+
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
@@ -19,6 +22,7 @@ Rails.application.routes.draw do
   resources :groups
   resources :documents
   resources :users
+  # resources :memberships
   # Example resource route with options:
   #   resources :products do
   #     member do

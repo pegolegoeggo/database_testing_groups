@@ -30,3 +30,18 @@ body{
 	border-radius:15px;
 
 }
+
+table {
+  border-collapse: collapse;
+  width: 90%;
+}
+
+td, th {
+  border: 2px solid #dddddd;
+  text-align: left;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #fff3b2;
+}

@@ -110,14 +110,29 @@ def update
 			#returns a collection of Membership objects, NOT USERS. 
 			if !@owners.nil?
 				puts "owner not nil"
-				@first = User.find(@owners.first.user_id)
+				@first = User.find(@owners.first.user_id).id
 			else
 				@first = @users.first.id
 			end
+
+			@memberships = @group.memberships
 		else
 			puts "group not found in membership"
 		end
  	end
+
+ 	#remove someone from the group 
+ 	def remove_member
+		@m_id = params[:m_id] #id of the membership in the membership join table 
+		@membership = Membership.find(@m_id)
+		@membership.destroy
+		@group = params[:group]
+
+		respond_to do |format|
+			format.html {redirect_to request.referrer}
+			format.xml  { head :no_content }
+		end
+	end
 
 
 	private 
