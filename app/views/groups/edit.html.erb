@@ -16,7 +16,11 @@
 	</p>
 
 	<p> 
-	Add Owner: <%= select_tag "owners", options_from_collection_for_select(@users, "id", "name", @first) %>
+	Add New Owner: <%= select_tag "owners", options_from_collection_for_select(@users, "id", "name"), :include_blank => 'User...' %>
+	</p>
+
+	<p> 
+	Add New Member: <%= select_tag "members", options_from_collection_for_select(@users, "id", "name"), :include_blank => 'User...' %>
 	</p>
 
 	<h3>People </h3>

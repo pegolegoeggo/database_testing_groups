@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190621205026) do
+ActiveRecord::Schema.define(version: 20190624192310) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20190621205026) do
 
   create_table "memberships", force: :cascade do |t|
     t.string  "role",     default: "owner"
-    t.integer "user_id"
+    t.integer "user_id",                    null: false
     t.integer "group_id",                   null: false
   end
 
@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 20190621205026) do
   add_index "testing", ["name", "food"], name: "testing_name_food_key", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
+    t.string "name",  null: false
     t.string "email"
   end
 

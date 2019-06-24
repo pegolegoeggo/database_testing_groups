@@ -63,7 +63,7 @@ def update
 	@group_id = params['id']
 	@group = Group.find(@group_id)
 	@checked = params['owners'] #new owner's user_id passed in. 
-	puts @checked
+	@new_member_id = params['members']
 
 	if !@group.memberships.nil?
 		for rel in @group.memberships
@@ -79,24 +79,45 @@ def update
 		end
 	end
 
-	
 	respond_to do |format|
 	    if @group.update_attributes(group_params)
-	      	begin 
-			@group.users << User.find(@checked)
-		
-		rescue ActiveRecord::RecordNotUnique
-			puts "no change"
-			
-		end
-	        format.html { redirect_to(@group, :notice => 'Group was successfully updated.') }
-	        format.xml  { head :ok }
-	    else
-	        render :edit
+	    	@new = false
+	    	begin 
+	    		@group.users.find(@new_member_id)
+	    	rescue ActiveRecord::RecordNotFound
+	    		@new = true
+	    	end 
+
+	    	if !@new_member_id.blank? && @new
+	    		puts "new member!"
+	    		@group.users << User.find(@new_member_id)
+
+	    		#change role to member 
+	    		@membership = @group.memberships.find_by(user_id: @new_member_id)
+	    		puts @membership.role
+	    		@membership.role = 'member'
+	    		@membership.save
+	    		puts 'role set to member'
+	    		# @group.memberships.find_by(user_id: @new_member_id).save
+	    	end
+
+
+	      	if !@checked.blank?
+	      		begin
+	      			@group.users << User.find(@checked)
+	      		rescue ActiveRecord::RecordNotUnique
+	      			puts 'no change'
+	      		end 
+			    
+			end
 	    
-	      end
-	    end
+		format.html { redirect_to(@group, :notice => 'Group was successfully updated.') }
+		format.xml  { head :ok }
+	else
+	    render :edit
 	end
+	end
+end
 
 	def edit
 		#db calls
@@ -109,12 +130,12 @@ def update
 	    	puts "here"
 			@owners = @group.memberships.where(role: "owner")
 			#returns a collection of Membership objects, NOT USERS. 
-			if !@owners.nil? && @owners.length > 0 #first clause not enough to handle no owners case
-				puts "owner not nil"
-				@first = User.find(@owners.first.user_id).id
-			else
-				@first = @users.first.id
-			end
+			# if !@owners.nil? && @owners.length > 0 #first clause not enough to handle no owners case
+			# 	puts "owner not nil"
+			# 	@first = User.find(@owners.first.user_id).id
+			# else
+			# 	@first = @users.first.id
+			# end
 
 			@memberships = @group.memberships
 
@@ -140,8 +161,8 @@ def update
 	private 
 
 	def group_params
-    params.require(:group).permit(:name)
-  end
+    	params.require(:group).permit(:name)
+	end
 end
 
 	
