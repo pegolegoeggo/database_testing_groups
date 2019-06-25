@@ -119,6 +119,7 @@ def update
 	    		@devisemembership.save
 	    		puts 'role set to member'
 	    		# @group.memberships.find_by(user_id: @new_member_id).save
+	    		
 	    	end
 
 
@@ -147,7 +148,7 @@ end
 		# @users = User.all #for display in drop down menu..not ideal for now. 
 		@users = Person.all #changed from User.all
 		@documents = @group.documents
-
+		@invite = Invite.new
 	    if !Devisemembership.find_by(group_id: @id).nil?
 	    	puts "here"
 			@owners = @group.devisememberships.where(role: "owner")

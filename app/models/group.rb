@@ -9,5 +9,7 @@ class Group < ActiveRecord::Base
 	has_many :devisememberships
 	has_many :people, through: :devisememberships
 	accepts_nested_attributes_for :devisememberships
+
+	has_many :invites
 end
 

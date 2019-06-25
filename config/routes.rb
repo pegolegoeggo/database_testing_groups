@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   resources :groups
   resources :documents
   resources :users
+  resources :invites
   # resources :memberships
   # Example resource route with options:
   #   resources :products do
