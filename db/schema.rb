@@ -11,10 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190624192310) do
+ActiveRecord::Schema.define(version: 20190624205151) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "devisememberships", force: :cascade do |t|
+    t.integer "person_id",                   null: false
+    t.integer "group_id",                    null: false
+    t.string  "role",      default: "owner"
+  end
+
+  add_index "devisememberships", ["person_id", "group_id"], name: "index_devisememberships_on_person_id_and_group_id", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -46,6 +54,20 @@ ActiveRecord::Schema.define(version: 20190624192310) do
   end
 
   add_index "memberships", ["user_id", "group_id"], name: "index_memberships_on_user_id_and_group_id", unique: true, using: :btree
+
+  create_table "people", force: :cascade do |t|
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.string   "name"
+  end
+
+  add_index "people", ["email"], name: "index_people_on_email", unique: true, using: :btree
+  add_index "people", ["reset_password_token"], name: "index_people_on_reset_password_token", unique: true, using: :btree
 
   create_table "testing", force: :cascade do |t|
     t.string "name", limit: 30, null: false

@@ -1,4 +1,5 @@
 <%= render 'home' %>
+<% if person_signed_in? %>
 
 Enter new document info
 
@@ -47,4 +48,7 @@ Current Documents: <br/>
 <% else %>
 	<p> no documents found </p>
 
+<% end %>
+<% else %>
+<p class = "permissionError"> Please sign in to see this page </p>
 <% end %>

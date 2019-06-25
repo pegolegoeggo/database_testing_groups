@@ -21,12 +21,32 @@ class GroupsController < ApplicationController
 			# 	puts @owner		
 			# end
 
-			#trying multiple owners support: 
-			if !Membership.find_by(group_id: @id).nil?
-				@owners = @group.memberships.where(role: "owner")
+			#trying multiple owners support WORKING: 
+			# if !Membership.find_by(group_id: @id).nil?
+			# 	@owners = @group.memberships.where(role: "owner")
+			# 	#returns a collection of Membership objects, NOT USERS.
+			# 	@memberships = @group.memberships.order('role DESC')
+			# end
+
+			# @is_owner = false
+			# #devise version 
+			if !Devisemembership.find_by(group_id: @id).nil? && person_signed_in?
+				@owners = @group.devisememberships.where(role: "owner")
 				#returns a collection of Membership objects, NOT USERS.
-				@memberships = @group.memberships.order('role DESC')
+				@memberships = @group.devisememberships.order('role DESC')
 			end
+
+			# 	#check if logged in user is an owner 
+			# 	@relation = Devisemembership.where(group_id: @id, person_id: current_person.id).first
+			# 	if !@relation.nil? && @relation.role == 'owner'
+			# 		@is_owner = true
+			# 		puts 'is owner'
+
+			# 	end
+
+
+				
+			# end
 
 
 		end
@@ -34,7 +54,6 @@ class GroupsController < ApplicationController
 	def new
 		@group = Group.new
 		@groups = Group.limit(10)
-		@users = User.all
 		respond_to do |format|
 		    format.html # new.html.erb
 		    format.xml  { render :xml => @group }
@@ -44,9 +63,11 @@ class GroupsController < ApplicationController
 	def create
 
 		@group = Group.new(group_params)
-		@creator = params['creator']
-		@group.users << User.find(@creator)
-		puts "finding..."
+		# @creator = params['creator']
+		# @group.users << User.find(@creator)
+		if person_signed_in?
+			@group.people << current_person
+		end
 		#role set to owner as default  
 		#when adding using to a group, just make sure to find membership using both user and group id, 
 		#then change the role using update_attribute. 
@@ -65,11 +86,11 @@ def update
 	@checked = params['owners'] #new owner's user_id passed in. 
 	@new_member_id = params['members']
 
-	if !@group.memberships.nil?
-		for rel in @group.memberships
-			@uid = rel.user_id.to_s
+	if !@group.devisememberships.nil?
+		for rel in @group.devisememberships
+			@pid = rel.person_id.to_s
 			@current_role = rel.role
-			@selected_role = params['role' + @uid]
+			@selected_role = params['role' + @pid]
 			if @current_role != @selected_role
 				rel.role = @selected_role
 				rel.save
@@ -83,20 +104,21 @@ def update
 	    if @group.update_attributes(group_params)
 	    	@new = false
 	    	begin 
-	    		@group.users.find(@new_member_id)
+	    		@group.people.find(@new_member_id)
 	    	rescue ActiveRecord::RecordNotFound
 	    		@new = true
 	    	end 
 
 	    	if !@new_member_id.blank? && @new
 	    		puts "new member!"
-	    		@group.users << User.find(@new_member_id)
+	    		# @group.users << User.find(@new_member_id)
+	    		@group.people << Person.find(@new_member_id)
 
 	    		#change role to member 
-	    		@membership = @group.memberships.find_by(user_id: @new_member_id)
-	    		puts @membership.role
-	    		@membership.role = 'member'
-	    		@membership.save
+	    		@devisemembership = @group.devisememberships.find_by(person_id: @new_member_id)
+	    		puts @devisemembership.role
+	    		@devisemembership.role = 'member'
+	    		@devisemembership.save
 	    		puts 'role set to member'
 	    		# @group.memberships.find_by(user_id: @new_member_id).save
 	    	end
@@ -104,7 +126,8 @@ def update
 
 	      	if !@checked.blank?
 	      		begin
-	      			@group.users << User.find(@checked)
+	      			# @group.users << User.find(@checked)
+	      			@group.people << Person.find(@checked)
 	      		rescue ActiveRecord::RecordNotUnique
 	      			puts 'no change'
 	      		end 
@@ -123,12 +146,13 @@ end
 		#db calls
 		@id = params['id']
 	    @group = Group.find(@id)
-		@users = User.all #for display in drop down menu..not ideal for now. 
+		# @users = User.all #for display in drop down menu..not ideal for now. 
+		@users = Person.all #changed from User.all
 		@documents = @group.documents
 
-	    if !Membership.find_by(group_id: @id).nil?
+	    if !Devisemembership.find_by(group_id: @id).nil?
 	    	puts "here"
-			@owners = @group.memberships.where(role: "owner")
+			@owners = @group.devisememberships.where(role: "owner")
 			#returns a collection of Membership objects, NOT USERS. 
 			# if !@owners.nil? && @owners.length > 0 #first clause not enough to handle no owners case
 			# 	puts "owner not nil"
@@ -137,19 +161,38 @@ end
 			# 	@first = @users.first.id
 			# end
 
-			@memberships = @group.memberships
+			@memberships = @group.devisememberships
 
 		else
 			puts "group not found in membership"
 		end
+
+		#only show page if owner. prevents people from hacking via url
+		# @is_owner = false
+		# 	#devise version 
+		# 	if !Devisemembership.find_by(group_id: @id).nil? && person_signed_in?
+		# 		@owners = @group.devisememberships.where(role: "owner")
+		# 		#returns a collection of Membership objects, NOT USERS.
+		# 		@memberships = @group.devisememberships.order('role DESC')
+
+		# 		#check if logged in user is an owner 
+		# 		@relation = Devisemembership.where(group_id: @id, person_id: current_person.id).first
+		# 		if !@relation.nil? && @relation.role == 'owner'
+		# 			@is_owner = true
+		# 			puts 'is owner'
+
+		# 		end
+
+
+				
+		# 	end
  	end
 
  	#remove someone from the group 
  	def remove_member
 		@m_id = params[:m_id] #id of the membership in the membership join table 
-		@membership = Membership.find(@m_id)
+		@membership = Devisemembership.find(@m_id)
 		@membership.destroy
-		@group = params[:group]
 
 		respond_to do |format|
 			format.html {redirect_to request.referrer}

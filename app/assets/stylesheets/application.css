@@ -45,3 +45,14 @@ td, th {
 tr:nth-child(even) {
   background-color: #fff3b2;
 }
+
+.notice{
+	color:magenta;
+	font-size:20px;
+}
+
+.permissionError{
+	text-align:center;
+	font-size:20px;
+	color:red;
+}

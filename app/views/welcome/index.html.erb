@@ -1,5 +1,34 @@
-<h1>Welcome#index</h1>
 <p>Find me in app/views/welcome/index.html.erb</p>
+
+	<% if person_signed_in? %>
+	<h1>Welcome <%= current_person.name %></h1>
+	<ul>
+		<li> 
+			<%= link_to 'Sign Out', destroy_person_session_path, method: :delete %>
+		</li>
+		<li> <%= current_person.email %></li>
+		<li> <%= link_to 'Edit Account', edit_person_registration_path %></li>
+	</ul>
+
+	<h2> My Groups </h2>
+	<p>
+	<% @mygroups.each do |g| %>
+		<%= link_to g.name, :controller => 'groups', :action => 'show', :id => g.id%>
+	<% end %>
+	<br>
+	-----------------------------------------------------------
+	</p>
+
+
+	<% else %>
+
+		<%= link_to 'Sign in', new_person_session_path %>
+
+		 <%= link_to 'Sign up', new_person_registration_path %>
+
+	<% end %>
+
+
 
 <%= link_to 'Groups', :controller => 'groups', :action => 'index' %> 
 <br/>

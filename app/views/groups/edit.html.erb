@@ -1,11 +1,14 @@
 <%= render 'home' %>
 
+<% if is_owner() %>
+
+
 <h1>Editing Group: <%= @group.name %> </h1>
 
 <% if !@owners.nil? %>
 	Owner(s): 
 	<% @owners.each do |o| %> 
-		<%= link_to User.find(o.user_id).name, :controller => 'users', :action => 'show', :id => o.user_id %> 
+		<%= Person.find(o.person_id).name %>  | 
 	<% end %>
 <% end %>
 
@@ -30,15 +33,15 @@
 			<th> Role </th>
 			<th> Edit </th>
 		</tr>
-		<% if !@memberships.nil? %>
+	<% if !@memberships.nil? %>
 	<% @memberships.each do |m| %>
 			<tr> 
-				<% @person = User.find(m.user_id) %>
-				<td> <%= link_to @person.name, @person %></td>
+				<% @person = Person.find(m.person_id) %>
+				<td> <%= @person.name %></td>
 
 				<td> <%= select_tag "role" + @person.id.to_s, options_for_select([ "owner", "member" ], m.role) %> </td> 
 
-				<td> <%= link_to 'Remove from group', :controller => 'groups', :action => 'remove_member', :m_id => m.id, :group => Group.find(m.group_id) %></td>
+				<td> <%= link_to 'Remove from group', :controller => 'groups', :action => 'remove_member', :m_id => m.id %></td>
 			</tr>
 		<% end %>
 	<% end %>
@@ -64,7 +67,16 @@ Current Documents: <br/>
 	<p> no documents found </p>
 
 <% end %>
+
+
+<% else %>
+
+<p class = "permissionError"> You do not have permission to view this page </p>
+
+<% end %>
+
 <p></p>
 
 <%= link_to 'Show', @group %> |
 <%= link_to 'Back', group_path %>
+

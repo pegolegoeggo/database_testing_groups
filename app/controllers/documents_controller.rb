@@ -25,8 +25,10 @@ class DocumentsController < ApplicationController
 	def new
 		@document = Document.new
 		@documents = Document.all
-		@groups = Group.all
+		if person_signed_in?
+			@groups = Person.find(current_person.id).groups
 		# puts @groups
+		end
 
 		respond_to do |format|
      		format.html # new.html.erb
@@ -89,7 +91,8 @@ class DocumentsController < ApplicationController
 
 	def edit
 		#db calls
-	    @groups = Group.all
+	    # @groups = Group.all
+	    @groups = Person.find(current_user.id).groups
 	    @document = Document.find(params['id'])
 	    @documents = Document.all
 	    @current_groups = @document.groups

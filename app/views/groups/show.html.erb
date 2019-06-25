@@ -9,7 +9,8 @@
 	<% if !@owners.nil? %>
 		Owner(s): 
 		<% @owners.each do |o| %> 
-			<%= link_to User.find(o.user_id).name, :controller => 'users', :action => 'show', :id => o.user_id %> 
+			<%= Person.find(o.person_id).name%> | 
+			
 		<% end %>
 	<% end %>
 
@@ -37,8 +38,8 @@
 		<% if !@memberships.nil? %>
 		<% @memberships.each do |m| %>
 			<tr> 
-				<% @person = User.find(m.user_id) %>
-				<td> <%= link_to @person.name, @person %></td>
+				<% @person = Person.find(m.person_id) %>
+				<td> <%= @person.name %> </td>
 				<td> <%= m.role %> </td> 
 			</tr>
 		<% end %>
@@ -50,5 +51,12 @@
 
 
 <br>
+
+<% if person_signed_in? %>
 <%= link_to 'Create new Group', :controller => 'groups', :action => 'new' %>
-<%= link_to 'Edit Current Group', :controller => 'groups', :action => 'edit' %>
+<% end %>
+
+<% if is_owner() %>
+
+	<%= link_to 'Edit Current Group', :controller => 'groups', :action => 'edit' %>
+<% end %>
