@@ -16,6 +16,8 @@
 
 	<h1> <%= @name %> </h1>
 
+<% if in_group() %>
+
 	<h2>Documents: </h2>
 	<% if !@documents.nil? %>
 		<% @documents.each do |doc| %>
@@ -48,6 +50,7 @@
 
 
 	</table>
+<% end %>
 
 
 <br>

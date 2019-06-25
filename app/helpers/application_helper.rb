@@ -16,10 +16,13 @@ module ApplicationHelper
 				
 			end
 
-
 		else 
 			false
 		end
 
+	end
+
+	def in_group()
+		!Devisemembership.find_by(group_id: @id, person_id: current_person.id).nil? && person_signed_in?
 	end
 end

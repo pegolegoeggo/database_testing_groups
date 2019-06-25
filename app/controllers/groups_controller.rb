@@ -47,8 +47,6 @@ class GroupsController < ApplicationController
 
 				
 			# end
-
-
 		end
 	end 
 	def new
