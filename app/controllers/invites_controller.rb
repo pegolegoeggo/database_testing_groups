@@ -6,12 +6,12 @@ class InvitesController < ApplicationController
 		@invite = Invite.new(invite_params) #make new invite
 		@invite.sender_id = current_person.id #set sender to logged in PERSON
 		@token = @invite.token
-		if @token && Invite.find_by(token: @token)
+		if (@token && Invite.find_by(token: @token)) 
 			@invite.group_id = Invite.find_by(token: @token).group.id #need this before @invite.save
-		else
-			flash[:error] = 'invalid token'
-			redirect_to request.referrer
-			return #early return 
+		# else
+		# 	flash[:error] = 'invalid token'
+		# 	redirect_to request.referrer
+		# 	return #early return 
 		end
 
 		begin 
@@ -21,7 +21,7 @@ class InvitesController < ApplicationController
 				#won't work until third party email is set up 
 				#InviteMailer.invite_new_person(@invite, new_person_registration_path(:invite_token => @invite.token)).deliver 
 
-				if @token #invite via token
+				if @token && @invite.email.nil?#invite via token
 					puts 'token found'
 
 					#make sure token is valid 
@@ -38,7 +38,7 @@ class InvitesController < ApplicationController
 						redirect_to welcome_index_path
 
 
-				elsif @invite.recipient #invite existing user
+				elsif @invite.email #invite existing user
 					puts 'invite existing'
 					#send notification email, automatically add to group: might wanna change. 
 					InviteMailer.invite_existing_person(@invite.recipient, @invite).deliver
@@ -71,6 +71,11 @@ class InvitesController < ApplicationController
 		rescue ActiveRecord::RecordNotUnique
 			flash[:error] = 'already joined group'
 			redirect_to request.referrer
+
+		rescue ActiveRecord::StatementInvalid
+			flash[:error] = 'invalid token'
+			redirect_to request.referrer
+
 		end
 	end
 
