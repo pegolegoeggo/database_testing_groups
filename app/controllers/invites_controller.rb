@@ -4,31 +4,71 @@ class InvitesController < ApplicationController
 	def create
 		@invite = Invite.new(invite_params) #make new invite
 		@invite.sender_id = current_person.id #set sender to logged in PERSON
+		@token = @invite.token
+		if @token 
+			@invite.group_id = Invite.find_by(token: @token).group.id
+		end
+		
+		begin 
 
-		if @invite.save
-			#send the invite data to our mailer to deliver the email)
-			#won't work until third party email is set up 
-			#InviteMailer.invite_new_person(@invite, new_person_registration_path(:invite_token => @invite.token)).deliver 
+			if @invite.save
+				#send the invite data to our mailer to deliver the email)
+				#won't work until third party email is set up 
+				#InviteMailer.invite_new_person(@invite, new_person_registration_path(:invite_token => @invite.token)).deliver 
 
-			if !@invite.recipient.nil?
-				#send notification email, automatically add to group: might wanna change. 
-				InviteMailer.invite_existing_person(@invite.recipient, @invite).deliver
+				if @token #invite via token
+					@invite.group_id = Invite.find_by(token: @token).group.id
+					puts 'token found'
 
-				#automatically add person to group. Or rather, add group to person
-				@invite.recipient.groups << @invite.group
+					#make sure token is valid 
+					begin
+						org =  Invite.find_by(token: @token).group #find the user group attached to the invite
+		     			current_person.groups << org #add this user to the new user group as a member
+			     		@gid = org.id
+						@pid = current_person.id
+						@membership = Devisemembership.find_by(group_id: @gid, person_id: @pid)
+						@membership.role = 'member'
+						@membership.save
+						puts 'member added'
+						redirect_to welcome_index_path
+					rescue 
+						puts 'invalid token'
+						redirect_to request.referrer
+					end
 
-				#set role to member since it's owner by default
-				@gid = @invite.group.id
-				@pid = @invite.recipient.id
-				@membership = Devisemembership.find_by(group_id: @gid, person_id: @pid)
-				@membership.role = 'member'
-				@membership.save
-				puts 'member added'
+
+				elsif @invite.recipient #invite existing user
+					puts 'invite existing'
+					#send notification email, automatically add to group: might wanna change. 
+					InviteMailer.invite_existing_person(@invite.recipient, @invite).deliver
+
+					#automatically add person to group. Or rather, add group to person
+					@invite.recipient.groups << @invite.group
+
+					#set role to member since it's owner by default
+					@gid = @invite.group.id
+					@pid = @invite.recipient.id
+					@membership = Devisemembership.find_by(group_id: @gid, person_id: @pid)
+					@membership.role = 'member'
+					@membership.save
+					puts 'member added'
+					redirect_to request.referrer
+				else #invite new user
+					puts 'else'
+
+					#send invite token that anyone can use to join group, not just new users
+					#InviteMailer.invite_new_person(new_person_registration_path(:invite_token => @invite.token), @invite).deliver
+					InviteMailer.invite_new_person(@invite.token, @invite)
+					redirect_to controller: 'groups', action: 'edit', id: @invite.group_id, invite_token: @invite.token
+				end
+
+
+			else
+				#oh no! creating a new invitation failed. 
 				redirect_to request.referrer
 			end
-
-		else
-			#oh no! creating a new invitation failed. 
+		rescue ActiveRecord::RecordNotUnique
+			puts 'token already exists'
 			redirect_to request.referrer
 		end
 	end

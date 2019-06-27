@@ -31,7 +31,7 @@
 		<tr>
 			<th> Name </th>
 			<th> Role </th>
-			<th> Edit </th>
+			<th> Remove </th>
 		</tr>
 	<% if !@memberships.nil? %>
 	<% @memberships.each do |m| %>
@@ -55,7 +55,7 @@
 
 <br/>
 
-Send Invitation Form
+Invite by Email (existing users only)
 
 <%= form_for @invite , :url => invites_path do |f| %>
     <%= f.hidden_field :group_id, :value => @id %>
@@ -66,8 +66,24 @@ Send Invitation Form
 
 <br/>
 
+Invite token: 
 
-Current Documents: <br/>
+<% @i = Invite.find_by(group_id: @id, sender_id: current_person.id) %>
+<% if @i %>
+	<%= @i.token %>
+
+<% else %>
+
+	<%= form_for @invite , :url => invites_path do |f| %>
+	    <%= f.hidden_field :group_id, :value => @id %>
+	<%= f.submit 'Generate Token'%>
+	<% end %>
+<% end %>
+
+<br/>
+<p></p>
+
+<h3> Current Documents: <br/> </h3>
  
 <% if !@documents.blank? %>
 	<% for item in @documents %>

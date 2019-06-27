@@ -25,4 +25,6 @@ module ApplicationHelper
 	def in_group()
 		!Devisemembership.find_by(group_id: @id, person_id: current_person.id).nil? && person_signed_in?
 	end
+
+	# application_helper.rb
 end

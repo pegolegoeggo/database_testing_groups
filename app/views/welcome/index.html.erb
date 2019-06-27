@@ -10,11 +10,27 @@
 		<li> <%= link_to 'Edit Account', edit_person_registration_path %></li>
 	</ul>
 
+	<p>
+		Enter token to join group. PLEASE BE CAREFUL OF EXTRA SPACES
+		<%= form_for(@invite, url: invites_path) do |f| %>
+		    <%= f.label 'Token:' %>
+		    <%= f.text_field :token %>
+		    <%= f.submit 'Submit' %>
+		<% end %>
+
+	</p>
+
+
+
 	<h2> My Groups </h2>
 	<p>
-	<% @mygroups.each do |g| %>
-		<%= link_to g.name, :controller => 'groups', :action => 'show', :id => g.id%>
-	<% end %>
+	<ul>
+		<% @mygroups.each do |g| %>
+
+			<li><%= link_to g.name, :controller => 'groups', :action => 'show', :id => g.id%> (<%= Devisemembership.find_by(group_id: g.id, person_id: current_person.id).role %>) </li>
+		<% end %>
+
+		</ul>
 	<br>
 	-----------------------------------------------------------
 	</p>

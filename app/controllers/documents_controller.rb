@@ -92,7 +92,7 @@ class DocumentsController < ApplicationController
 	def edit
 		#db calls
 	    # @groups = Group.all
-	    @groups = Person.find(current_user.id).groups
+	    @groups = Person.find(current_person.id).groups
 	    @document = Document.find(params['id'])
 	    @documents = Document.all
 	    @current_groups = @document.groups

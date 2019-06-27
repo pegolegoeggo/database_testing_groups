@@ -51,7 +51,8 @@ class GroupsController < ApplicationController
 	end 
 	def new
 		@group = Group.new
-		@groups = Group.limit(10)
+		#race condition? need to double check
+		@groups = Group.order(created_at: :desc).limit(10)
 		respond_to do |format|
 		    format.html # new.html.erb
 		    format.xml  { render :xml => @group }
