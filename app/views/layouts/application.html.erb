@@ -10,6 +10,14 @@
  <p class="notice"><%= notice %></p>
        <p class="alert"><%= alert %></p>
 
+<div>
+	<% flash.each do |key, val| %>
+		<div class="flashes"> <%= val %>
+	<% end %>
+		
+</div>
+
+
 <% if person_signed_in? %>
 	<p> Signed in as <%= current_person.name%></p> 
 <% else %>

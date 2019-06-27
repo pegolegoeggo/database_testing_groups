@@ -1,14 +1,19 @@
 class InvitesController < ApplicationController
 	def index
 	end
+
 	def create
 		@invite = Invite.new(invite_params) #make new invite
 		@invite.sender_id = current_person.id #set sender to logged in PERSON
 		@token = @invite.token
-		if @token 
-			@invite.group_id = Invite.find_by(token: @token).group.id
+		if @token && Invite.find_by(token: @token)
+			@invite.group_id = Invite.find_by(token: @token).group.id #need this before @invite.save
+		else
+			flash[:error] = 'invalid token'
+			redirect_to request.referrer
+			return #early return 
 		end
-		
+
 		begin 
 
 			if @invite.save
@@ -17,24 +22,20 @@ class InvitesController < ApplicationController
 				#InviteMailer.invite_new_person(@invite, new_person_registration_path(:invite_token => @invite.token)).deliver 
 
 				if @token #invite via token
-					@invite.group_id = Invite.find_by(token: @token).group.id
 					puts 'token found'
 
 					#make sure token is valid 
-					begin
 						org =  Invite.find_by(token: @token).group #find the user group attached to the invite
+						@invite.group_id = Invite.find_by(token: @token).group.id
 		     			current_person.groups << org #add this user to the new user group as a member
 			     		@gid = org.id
 						@pid = current_person.id
 						@membership = Devisemembership.find_by(group_id: @gid, person_id: @pid)
 						@membership.role = 'member'
 						@membership.save
-						puts 'member added'
+						flash[:success] = 'member added'
+
 						redirect_to welcome_index_path
-					rescue 
-						puts 'invalid token'
-						redirect_to request.referrer
-					end
 
 
 				elsif @invite.recipient #invite existing user
@@ -68,7 +69,7 @@ class InvitesController < ApplicationController
 				redirect_to request.referrer
 			end
 		rescue ActiveRecord::RecordNotUnique
-			puts 'token already exists'
+			flash[:error] = 'already joined group'
 			redirect_to request.referrer
 		end
 	end
