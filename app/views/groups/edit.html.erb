@@ -70,7 +70,7 @@ Invite token:
 
 <% @i = Invite.find_by(group_id: @id, sender_id: current_person.id) %>
 <% if @i %>
-	<%= @i.token %>
+	<%= welcome_index_path(:invite_token => @i.token) %>
 
 <% else %>
 

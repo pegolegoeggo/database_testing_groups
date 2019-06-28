@@ -6,12 +6,8 @@ class InvitesController < ApplicationController
 		@invite = Invite.new(invite_params) #make new invite
 		@invite.sender_id = current_person.id #set sender to logged in PERSON
 		@token = @invite.token
-		if (@token && Invite.find_by(token: @token)) 
+		if (@token && Invite.find_by(token: @token) && @invite.group_id.nil?) 
 			@invite.group_id = Invite.find_by(token: @token).group.id #need this before @invite.save
-		# else
-		# 	flash[:error] = 'invalid token'
-		# 	redirect_to request.referrer
-		# 	return #early return 
 		end
 
 		begin 
@@ -21,24 +17,24 @@ class InvitesController < ApplicationController
 				#won't work until third party email is set up 
 				#InviteMailer.invite_new_person(@invite, new_person_registration_path(:invite_token => @invite.token)).deliver 
 
-				if @token && @invite.email.nil?#invite via token
+				if @token && @invite.email.nil? #invite via token on user home page
 					puts 'token found'
 
 					#make sure token is valid 
-						org =  Invite.find_by(token: @token).group #find the user group attached to the invite
-						@invite.group_id = Invite.find_by(token: @token).group.id
-		     			current_person.groups << org #add this user to the new user group as a member
-			     		@gid = org.id
-						@pid = current_person.id
-						@membership = Devisemembership.find_by(group_id: @gid, person_id: @pid)
-						@membership.role = 'member'
-						@membership.save
-						flash[:success] = 'member added'
+					org =  Invite.find_by(token: @token).group #find the user group attached to the invite
+					@invite.group_id = Invite.find_by(token: @token).group.id
+	     			current_person.groups << org #add this user to the new user group as a member
+		     		@gid = org.id
+					@pid = current_person.id
+					@membership = Devisemembership.find_by(group_id: @gid, person_id: @pid)
+					@membership.role = 'member'
+					@membership.save
+					flash[:success] = 'Successfully joined group!'
 
-						redirect_to welcome_index_path
+					redirect_to welcome_index_path
 
 
-				elsif @invite.email #invite existing user
+				elsif @invite.recipient #invite existing user
 					puts 'invite existing'
 					#send notification email, automatically add to group: might wanna change. 
 					InviteMailer.invite_existing_person(@invite.recipient, @invite).deliver
@@ -54,12 +50,18 @@ class InvitesController < ApplicationController
 					@membership.save
 					puts 'member added'
 					redirect_to request.referrer
-				else #invite new user
-					puts 'else'
 
+
+
+				else #invite new user by email entry, currently disabled. not sure how to proceed...
+					puts 'else'
 					#send invite token that anyone can use to join group, not just new users
 					#InviteMailer.invite_new_person(new_person_registration_path(:invite_token => @invite.token), @invite).deliver
-					InviteMailer.invite_new_person(@invite.token, @invite)
+
+
+					#InviteMailer.invite_new_person(welcome_index_path(:invite_token => @invite.token), @invite).deliver
+
+					flash[:error] = "User not found"
 					redirect_to controller: 'groups', action: 'edit', id: @invite.group_id, invite_token: @invite.token
 				end
 
@@ -70,11 +72,11 @@ class InvitesController < ApplicationController
 			end
 		rescue ActiveRecord::RecordNotUnique
 			flash[:error] = 'already joined group'
-			redirect_to request.referrer
+			redirect_to welcome_index_path
 
 		rescue ActiveRecord::StatementInvalid
 			flash[:error] = 'invalid token'
-			redirect_to request.referrer
+			redirect_to welcome_index_path
 
 		end
 	end

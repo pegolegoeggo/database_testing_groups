@@ -12,13 +12,24 @@
 
 	<p>
 		Enter token to join group. PLEASE BE CAREFUL OF EXTRA SPACES
-		<%= form_for(@invite, url: invites_path) do |f| %>
-		    <%= f.label 'Token:' %>
+		<%= form_for(@invite, url: invites_path, html: { name: "join-via-token"}) do |f| %>
+			<%= f.label 'Token:' %>
+			<% if params[:invite_token] %>
+				<%= f.text_field :token, :value => params[:invite_token] %>
+					<script>
+						window.onload = function(){
+							document.forms['join-via-token'].submit();
+						}
+					</script>
+			<% else %>
 		    <%= f.text_field :token %>
+		    <% end %>
 		    <%= f.submit 'Submit' %>
 		<% end %>
 
 	</p>
+
+
 
 
 
