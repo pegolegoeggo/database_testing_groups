@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
 
   get 'welcome/index'
+  post 'welcome/index'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -17,6 +18,9 @@ Rails.application.routes.draw do
 
   #removing a member from a group
    get 'remove_member' => "groups#remove_member"
+
+  #leave group 
+  get 'leave_group' => 'groups#leave_group'
 
    # get 'welcome/index/:invite_token' => "invites#create"
 

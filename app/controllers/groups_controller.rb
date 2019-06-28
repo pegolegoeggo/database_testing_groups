@@ -192,12 +192,42 @@ end
  	def remove_member
 		@m_id = params[:m_id] #id of the membership in the membership join table 
 		@membership = Devisemembership.find(@m_id)
+
+		#also remove the invite entry in invites table
+		@removedPerson = @membership.person_id
+		@invite = Invite.find_by(recipient_id: @removedPerson)
+		if @invite
+			@invite.destroy
+		end
+
 		@membership.destroy
 
 		respond_to do |format|
 			format.html {redirect_to request.referrer}
 			format.xml  { head :no_content }
 		end
+	end
+
+	#leave group 
+	def leave_group
+		@gid = params[:id]
+		@pid = current_person.id
+		@membership = Devisemembership.find_by(person_id: @pid, group_id: @gid)
+
+		#also remove the invite entry in invites table
+		@invite = Invite.find_by(recipient_id: @pid)
+		if @invite
+			@invite.destroy
+		end
+
+		@membership.destroy
+		flash[:success] = 'Left ' + Group.find(@gid).name.to_s 
+
+		respond_to do |format|
+			format.html {redirect_to welcome_index_path}
+			format.xml  { head :no_content }
+		end
+
 	end
 
 

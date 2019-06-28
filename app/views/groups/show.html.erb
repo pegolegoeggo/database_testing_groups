@@ -62,4 +62,10 @@
 <% if is_owner() %>
 
 	<%= link_to 'Edit Current Group', :controller => 'groups', :action => 'edit' %>
+<% end %>  
+
+<p>
+<% if in_group() %>
+	<%= link_to 'Leave Group', :controller => 'groups', :action => 'leave_group', :id => params[:id] %>
 <% end %>
+</p>

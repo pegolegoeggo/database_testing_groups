@@ -60,11 +60,11 @@ class InvitesController < ApplicationController
 
 
 					#InviteMailer.invite_new_person(welcome_index_path(:invite_token => @invite.token), @invite).deliver
-
-					flash[:error] = "User not found"
+					if @invite.email
+						flash[:error] = "User not found"
+					end
 					redirect_to controller: 'groups', action: 'edit', id: @invite.group_id, invite_token: @invite.token
 				end
-
 
 			else
 				#oh no! creating a new invitation failed. 

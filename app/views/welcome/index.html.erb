@@ -1,5 +1,3 @@
-<p>Find me in app/views/welcome/index.html.erb</p>
-
 	<% if person_signed_in? %>
 	<h1>Welcome <%= current_person.name %></h1>
 	<ul>
@@ -29,7 +27,15 @@
 
 	</p>
 
+<p>
+<% # original group joining method: auto join by entering group name %>
+Join Group by Entering Name: 
+	<%= form_tag do %>
+		<%= text_field_tag 'groupName'%>
+		<%= submit_tag 'Join'%>
+	<% end %>
 
+</p>
 
 
 
@@ -49,25 +55,18 @@
 
 	<% else %>
 
-		<%= link_to 'Sign in', new_person_session_path %>
+		<%= link_to 'Sign in', new_person_session_path %> <br/>
 
-		 <%= link_to 'Sign up', new_person_registration_path %>
+		 <%= link_to 'Sign up', new_person_registration_path %> <br/>
 
 	<% end %>
 
 
 
-<%= link_to 'Groups', :controller => 'groups', :action => 'index' %> 
-<br/>
-<%= link_to 'Documents', :controller => 'documents', :action => 'index' %> 
-<br/>
 
 <%= link_to'Create Documents', :controller => 'documents', :action =>'new' %>
 
 <br/>
 <%= link_to'Create Groups', :controller => 'groups', :action =>'new' %>
-
-<br/>
-<%= link_to'Create Users', :controller => 'users', :action =>'new' %>
 
 
