@@ -64,4 +64,13 @@ tr:nth-child(even) {
 .flashes{
 	color: green;
 	background-color:pink;
+	padding-left:50px;
+	font-family:serif;
+	margin-right:100px;
+}
+
+.document, .group, .create{
+	float:left;
+	margin-right:30px;
+	margin-left:100px;
 }

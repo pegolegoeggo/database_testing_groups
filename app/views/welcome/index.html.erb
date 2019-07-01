@@ -10,27 +10,29 @@
 
 	<p>
 		Enter token to join group. PLEASE BE CAREFUL OF EXTRA SPACES
-		<%= form_for(@invite, url: invites_path, html: { name: "join-via-token"}) do |f| %>
-			<%= f.label 'Token:' %>
+		<%= form_tag({:controller=>'invites', :action => 'join_via_token'}, {:name => 'join-via-token'}) do %>
+			<%= label_tag 'Token:' %>
 			<% if params[:invite_token] %>
-				<%= f.text_field :token, :value => params[:invite_token] %>
+				<%= text_field_tag 'token', params[:invite_token] %>
 					<script>
 						window.onload = function(){
 							document.forms['join-via-token'].submit();
 						}
 					</script>
 			<% else %>
-		    <%= f.text_field :token %>
+		    <%= text_field_tag 'token' %>
 		    <% end %>
-		    <%= f.submit 'Submit' %>
+		    <%= submit_tag 'Submit' %>
 		<% end %>
 
 	</p>
 
 <p>
 <% # original group joining method: auto join by entering group name %>
-Join Group by Entering Name: 
+
 	<%= form_tag do %>
+	Join group by entering name (case sensitive)
+		<% label_tag 'groupName' %>
 		<%= text_field_tag 'groupName'%>
 		<%= submit_tag 'Join'%>
 	<% end %>
@@ -38,9 +40,9 @@ Join Group by Entering Name:
 </p>
 
 
+<div class= "group">
 
-	<h2> My Groups </h2>
-	<p>
+	<h2> Groups </h2>
 	<ul>
 		<% @mygroups.each do |g| %>
 
@@ -49,24 +51,38 @@ Join Group by Entering Name:
 
 		</ul>
 	<br>
-	-----------------------------------------------------------
-	</p>
+</div>
 
+<div class="document"> 
+	<h2> Documents </h2>
+	<p>
+		<% @mygroups.each do |g| %>
+			<% g.documents.each do |d| %>
+				<%= link_to d.title, :controller => 'documents', :action => 'show', :id => d.id %> <br/>
+			<% end %>
+		<% end %>
+
+
+	</p>
+</div>
+
+<div class="create">
+	<%= link_to'Create Documents', :controller => 'documents', :action =>'new' %>
+
+	<br/>
+	<%= link_to'Create Groups', :controller => 'groups', :action =>'new' %>
+</div>
 
 	<% else %>
 
-		<%= link_to 'Sign in', new_person_session_path %> <br/>
 
-		 <%= link_to 'Sign up', new_person_registration_path %> <br/>
+		<%= link_to 'Sign in', new_person_session_path(invite_token: params[:invite_token]) %> <br/>
+
+		 <%= link_to 'Sign up', new_person_registration_path(invite_token: params[:invite_token]) %> <br/>
 
 	<% end %>
 
 
 
-
-<%= link_to'Create Documents', :controller => 'documents', :action =>'new' %>
-
-<br/>
-<%= link_to'Create Groups', :controller => 'groups', :action =>'new' %>
 
 

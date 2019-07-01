@@ -4,8 +4,8 @@ class WelcomeController < ApplicationController
   def index
   	if person_signed_in?
   		@mygroups = Person.find(current_person.id).groups.order('role DESC')
-  		@invite = Invite.new
-
+      @token = params[:invite_token]
+      puts @token
 
   		#note: this implementation is temporary but if we want to allow auto join, group name has to be unique
       begin

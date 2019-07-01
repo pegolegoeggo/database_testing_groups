@@ -18,6 +18,10 @@
     </div>
   <% end %>
 
+  <% if params[:invite_token] != nil %>
+    <%= hidden_field_tag :invite_token, params[:invite_token] %>
+  <% end %>
+
   <div class="actions">
     <%= f.submit "Log in" %>
   </div>

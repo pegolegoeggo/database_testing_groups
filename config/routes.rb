@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   
-  devise_for :people 
-  # ,:controllers => {:registrations => "registrations"}
+  devise_for :people ,:controllers => {:registrations => "registrations", :sessions => "sessions"}
 
 
   get 'welcome/index'
@@ -17,10 +16,20 @@ Rails.application.routes.draw do
   #   get 'products/:id' => 'catalog#view'
 
   #removing a member from a group
-   get 'remove_member' => "groups#remove_member"
+  get 'remove_member' => "groups#remove_member"
 
   #leave group 
   get 'leave_group' => 'groups#leave_group'
+
+  #join group by entering a token or following link with token
+  #form_tag defaults to post
+  post 'join_via_token' => 'invites#join_via_token'
+
+
+  #join group by entering an EXISTING user's email, automatically adds them to group
+  post 'email_invite' => 'invites#email_invite'
+
+
 
    # get 'welcome/index/:invite_token' => "invites#create"
 

@@ -30,19 +30,7 @@ Current Groups:
 	</p>
 <% end %>
 
-	
 
-Current Documents: <br/>
- 
-<% if !@documents.blank? %>
-	<% for item in @documents %>
-		<%= link_to item.title, :controller=> 'documents', :action => 'show', :id=> item.id %> <br/>
-<% end %>
-
-<% else %>
-	<p> no documents found </p>
-
-<% end %>
 
 <%= link_to 'Show', @document %> |
 <%= link_to 'Back', documents_path %>

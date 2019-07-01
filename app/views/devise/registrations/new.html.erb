@@ -24,9 +24,15 @@
     <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
   </div>
 
+  <% if params[:invite_token] != nil %>
+    <%= hidden_field_tag :invite_token, params[:invite_token] %>
+  <% end %>
+
   <div class="actions">
     <%= f.submit "Sign up" %>
   </div>
+
+
 <% end %>
 
 <%= render "devise/shared/links" %>

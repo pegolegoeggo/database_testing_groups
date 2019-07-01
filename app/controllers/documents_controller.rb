@@ -94,7 +94,6 @@ class DocumentsController < ApplicationController
 	    # @groups = Group.all
 	    @groups = Person.find(current_person.id).groups
 	    @document = Document.find(params['id'])
-	    @documents = Document.all
 	    @current_groups = @document.groups
 	    # puts @current_group.nil?
 
