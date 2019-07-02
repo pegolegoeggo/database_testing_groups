@@ -64,7 +64,6 @@ tr:nth-child(even) {
 .flashes{
 	color: green;
 	background-color:pink;
-	padding-left:50px;
 	font-family:serif;
 	margin-right:100px;
 }
@@ -74,3 +73,8 @@ tr:nth-child(even) {
 	margin-right:30px;
 	margin-left:100px;
 }
+
+.copy-button{
+	background-color:#ffed29;
+}
+

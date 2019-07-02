@@ -4,9 +4,9 @@
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
   </head>
   <body>
-    <h1>Welcome to MyApp </h1>
-    <p>You have a group invitation from <%= @invite.sender.name %></p>
-    <p> Enter this token in your home page to join the group <%= @link %>. 
-    If you don't have an account, please create one first. </p>
+    <h1>Welcome to MyApp!</h1>
+    <p>You were invited to <%= @group.name %> </p>
+    <p> Follow this link to create an account: <%= @link %>, or copy and paste into your browser. </p> 
+    
   </body>
 </html>

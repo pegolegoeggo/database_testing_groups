@@ -14,39 +14,12 @@ class GroupsController < ApplicationController
 			@name = @group.name
 			@documents = Group.find(@id).documents
 
-			#need to account for multiple owners: not yet available.
-			# if !Membership.find_by(group_id: @id).nil?
-			# 	@owner_id = Membership.find_by(group_id: @id).user_id
-			# 	@owner = User.find(@owner_id).name
-			# 	puts @owner		
-			# end
-
-			#trying multiple owners support WORKING: 
-			# if !Membership.find_by(group_id: @id).nil?
-			# 	@owners = @group.memberships.where(role: "owner")
-			# 	#returns a collection of Membership objects, NOT USERS.
-			# 	@memberships = @group.memberships.order('role DESC')
-			# end
-
-			# @is_owner = false
 			# #devise version 
 			if !Devisemembership.find_by(group_id: @id).nil? && person_signed_in?
 				@owners = @group.devisememberships.where(role: "owner")
 				#returns a collection of Membership objects, NOT USERS.
 				@memberships = @group.devisememberships.order('role DESC')
 			end
-
-			# 	#check if logged in user is an owner 
-			# 	@relation = Devisemembership.where(group_id: @id, person_id: current_person.id).first
-			# 	if !@relation.nil? && @relation.role == 'owner'
-			# 		@is_owner = true
-			# 		puts 'is owner'
-
-			# 	end
-
-
-				
-			# end
 		end
 	end 
 	def new
@@ -153,13 +126,6 @@ end
 	    if !Devisemembership.find_by(group_id: @id).nil?
 	    	puts "here"
 			@owners = @group.devisememberships.where(role: "owner")
-			#returns a collection of Membership objects, NOT USERS. 
-			# if !@owners.nil? && @owners.length > 0 #first clause not enough to handle no owners case
-			# 	puts "owner not nil"
-			# 	@first = User.find(@owners.first.user_id).id
-			# else
-			# 	@first = @users.first.id
-			# end
 
 			@memberships = @group.devisememberships
 
@@ -167,25 +133,6 @@ end
 			puts "group not found in membership"
 		end
 
-		#only show page if owner. prevents people from hacking via url
-		# @is_owner = false
-		# 	#devise version 
-		# 	if !Devisemembership.find_by(group_id: @id).nil? && person_signed_in?
-		# 		@owners = @group.devisememberships.where(role: "owner")
-		# 		#returns a collection of Membership objects, NOT USERS.
-		# 		@memberships = @group.devisememberships.order('role DESC')
-
-		# 		#check if logged in user is an owner 
-		# 		@relation = Devisemembership.where(group_id: @id, person_id: current_person.id).first
-		# 		if !@relation.nil? && @relation.role == 'owner'
-		# 			@is_owner = true
-		# 			puts 'is owner'
-
-		# 		end
-
-
-				
-		# 	end
  	end
 
  	#remove someone from the group 

@@ -1,14 +1,14 @@
 class InviteMailer < ApplicationMailer
 
-	def invite_new_person(link, invite)
-		@invite = invite
+	def invite_new_person(email, link, group)
 		@link = link
-		mail(to: @invite.email, subject: 'You have an invitation to a group!')
+		@group = group
+		mail(to: email, subject: 'New Group Invitation')
 	end
 
-	def invite_existing_person(person, invite)
+	def invite_existing_person(person, group)
 		@person = person
-		@invite = invite
+		@group = group
 		mail(to: @person.email, subject: 'You were added to a group')
 	end
 

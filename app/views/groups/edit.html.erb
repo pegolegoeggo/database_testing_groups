@@ -67,19 +67,18 @@ Invite by Email (existing users only)
 
 <br/>
 
-Invite token: 
-
-<!-- IMPORTANT: FIND_BY ONLY RETURNS FIRST MATCH. .WHERE RETURNS ALL MATCHES. IF A GROUP HAS MULTIPLE TOKENS, HOW TO DECIDE WHICH ONE TO USE?? OR CHOOSE A RANDOM TOKEN TO USE?  -->
-
 <% @i = Invite.find_by(group_id: @id) %>
 <% if @i %>
-	<%= welcome_index_path(:invite_token => @i.token) %>
+	<%= label_tag 'Invite Link' %>
+	<%= text_field_tag "Invite Link:", welcome_index_path(:invite_token => @i.token), {:size =>40, :class => 'copy-link' }%>
+	<%= button_tag 'Copy', {:class =>'copy-button'}%>
 
 <% else %>
 
 	<%= form_for @invite , :url => invites_path do |f| %>
 	    <%= f.hidden_field :group_id, :value => @id %>
-	<%= f.submit 'Generate Token'%>
+	<%= f.label 'Invite Link' %>    
+	<%= f.submit 'Generate'%>
 	<% end %>
 <% end %>
 
@@ -110,3 +109,26 @@ Invite token:
 <%= link_to 'Show', @group %> |
 <%= link_to 'Back', group_path %>
 
+<script>
+	//for invite link copy to clipboard
+	//source: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+
+	var copyButton = document.querySelector('.copy-button');
+
+	copyButton.addEventListener('click', function(event){
+
+		var copyLink = document.querySelector('.copy-link');
+		copyLink.focus();
+		copyLink.select();
+
+		try{
+			var successful = document.execCommand('copy');
+			var msg = successful ? 'successful' : 'unsuccessful';
+			console.log(msg);
+		} catch (err){
+			console.log('unable to copy')
+		}
+
+	});
+
+</script>

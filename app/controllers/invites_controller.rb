@@ -5,29 +5,39 @@ class InvitesController < ApplicationController
 	#actions for inviting existing users: email_invite and join_via_token
 	def email_invite
 		@gid = params[:group_id]
-
 		@recipient = Person.find_by(email: params[:email])
-		if @recipient 
-			@pid = @recipient.id
-		else
-			flash[:error] = 'user not found'
-			redirect_to request.referrer
-			return #early return
-		end
 
-		begin
-		@recipient.groups << Group.find(@gid)
-		#set role to member since it's owner by default
-			@membership = Devisemembership.find_by(group_id: @gid, person_id: @pid)
-			@membership.role = 'member'
-			@membership.save
-			flash[:success] = 'member added'
+		if @recipient #invite existin user, email notification
+			@pid = @recipient.id
+			begin
+				@recipient.groups << Group.find(@gid)
+				#set role to member since it's owner by default
+				@membership = Devisemembership.find_by(group_id: @gid, person_id: @pid)
+				@membership.role = 'member'
+				@membership.save
+				flash[:success] = @recipient.name.to_s + ' added'
+				InviteMailer.invite_existing_person(@recipient, Group.find(@gid)).deliver
 			
-		rescue ActiveRecord::RecordNotUnique
-			flash[:error] = 'already in group'
-			
+			rescue ActiveRecord::RecordNotUnique
+				flash[:error] = 'already in group'		
+			end
+
+			redirect_to request.referrer
+
+		else #email new user invite 
+			@token = Invite.find_by(group_id: @gid).token
+			if @token
+				InviteMailer.invite_new_person(params[:email], 
+					new_person_registration_path(invite_token: @token), Group.find(@gid)).deliver
+				flash[:success] = 'New user invitation emailed'
+			else
+				flash[:error] = 'Please generate invite link first'
+				
+			end
+			redirect_to request.referrer
+
+		
 		end
-		redirect_to request.referrer
 	end
 
 
@@ -66,7 +76,6 @@ class InvitesController < ApplicationController
 
 			redirect_to request.referrer
 		end
-
 
 	end
 
