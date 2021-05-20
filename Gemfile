@@ -26,7 +26,7 @@ gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-gem "nokogiri", '1.6.7'
+gem "nokogiri", '1.9.1'
 
 gem "composite_primary_keys"
 
